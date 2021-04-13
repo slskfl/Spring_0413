@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- 이곳이 작성하는 곳 -->
+	<bean id="viewResolver" 
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" /> 
+		<property name="prefix" value="/member/" /> <!-- member폴더 가져오라는 뜻 -->
+		<property name="suffix" value=".jsp" /> <!-- 확장자  -->
+	</bean>	
+	
+	<!-- 매핑하는 곳 -->
+	<bean id="urlMapping" 
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props> <!-- /member/*.do가 호출될 경우 UserController 호출을 위함-->
+				<prop key="/member/*.do">userController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 의존 관계 -->
+	<bean id="userController" class="com.ezen.UserController">
+		<property name="methodNameResolver">
+			<ref local="userMethodNameResolver" />
+		</property>
+	</bean>
+	
+	<bean id="userMethodNameResolver"
+		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings"> 
+			<props> <!-- /login/loginInfo.do가 호출될 경우 com.ezen.UserController의 loginInfo 메소드 호출을 위함-->
+				<prop key="/member/memberInfo.do">memberInfo</prop>
+			</props>
+		</property>
+	</bean>
+</beans>
